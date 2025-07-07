@@ -9,7 +9,7 @@ pandas_datareader==0.10.0
 polygon-api-client==1.14.0  # simple REST wrapper
 
 # Machine‑learning / modelling
-torch==2.2.2+cpu
+torch==2.2.2
 transformers==4.41.2
 arch==6.3.0
 
