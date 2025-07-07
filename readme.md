@@ -1,81 +1,60 @@
-# Quant Options Bot
+# Quant Options Trading Bot
 
-Modular Python framework for generating, back‑testing and executing option strategies driven by sentiment, volatility and event triggers.
-
----
+A modular, AI-driven options trading bot for automated strategies on equities and ETFs.  
+Supports iron condors, volatility plays, directional signals, and more.  
+Focus: S&P 500, ASX 200, high-volume tech stocks, sector ETFs.
 
 ## Features
 
-| Layer | Tech | Notes |
-| ----- | ---- | ----- |
-|       |      |       |
+- End-to-end data pipeline: real-time & historical options/stock data, macro indicators
+- AI modules for NLP news analysis & time-series forecasting
+- Robust backtesting with slippage, margin, and volatility modelling
+- Modular quant strategies: iron condor, straddle, directional, etc.
+- Interactive Brokers API integration (planned)
+- Risk management: drawdown limits, Kelly sizing, VaR, correlation checks
 
-| **Data**        | *yfinance*, FRED, Polygon            | Live OHLCV, macro time‑series, option snapshots                |
-| --------------- | ------------------------------------ | -------------------------------------------------------------- |
-| **Signals**     | FinBERT, GARCH/EWMA, plugin registry | Sentiment, vol forecast, unusual‑flow, breach and macro events |
-| **Back‑tester** | Polygon open‑close API               | 7‑day iron‐condor P/L with chain‑based strikes                 |
-| **Execution**   | stub                                 | Ready for IB‑insync / Tradier integration                      |
+## Installation
 
----
+1. Clone the repo:
+    ```sh
+    git clone git@github.com:YOURUSERNAME/trading-bot.git
+    cd trading-bot
+    ```
+2. Install dependencies:
+    ```sh
+    pip install -r requirements.txt
+    ```
+3. Add your API keys:
+    - Copy `.env.example` to `.env` and fill out values.
 
-## Quick start
+## Quick Start
 
-```bash
-# clone and enter repo
-git clone https://github.com/icysummer42/quant-options-bot.git
-cd quant-options-bot
+```sh
+python main.py
 
-# create env and install deps
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+Project Structure
 
-# export keys (free tiers work)
-export POLYGON_KEY=YOUR_KEY
-export TE_API_KEY=YOUR_KEY   # optional
+.
+├── bot/              # Core logic, strategies, and data pipeline
+├── main.py           # Entrypoint
+├── requirements.txt  # Python dependencies
+├── config.py         # Bot configuration
+├── plugins/          # Optional extra modules
+├── tests/            # Unit tests
+└── readme.md         # Project documentation
 
-# run back‑test
-python main.py --mode backtest
+Development
 
-# one live loop (prints debug only)
-python main.py --mode live --once
-```
+    Code style: Black
 
----
+    Lint: flake8
 
-## Configuration
+    Testing: pytest
 
-All tunables live in ``
+TODO
 
-```text
-symbols_equity        # tickers to scan
-unusual_options_min_premium  # sweep threshold
-edge_threshold        # live trade trigger
-```
+Expand AI NLP pipeline
 
-API keys are read from environment variables so you can keep credentials out of git.
+Broker execution API
 
----
-
-## File map
-
-```
-config.py            # parameters & keys
-data_pipeline.py     # market + macro fetchers
-plugins.py           # event‑trigger plugins
-signal_generator.py  # sentiment, vol, score
-data_pipeline.py
-main.py              # back‑tester + live loop
-requirements.txt     # pinned deps
-```
-
----
-
-## Roadmap
-
-- IBKR execution wiring
-- Option P/L with greeks, slippage, commissions
-- Streamlit risk dashboard
-- CI workflow (pytest + Ruff)
-- Docker image for scheduled deployment
-
+Live trading support
