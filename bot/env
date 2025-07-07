@@ -1,0 +1,11 @@
+# Copy this file to .env and fill in real keys
+# They will be loaded via os.getenv in config.py
+
+POLYGON_KEY=OROZxfRr0KoSI6ilsYZiyp8oTRHq478Y
+TE_API_KEY=YOUR_TRADING_ECONOMICS_KEY
+FRED_API_KEY=YOUR_FRED_KEY
+HIBP_API_KEY=YOUR_HAVEIBEENPWNED_KEY
+
+curl "https://api.polygon.io/v3/snapshot/options/AAPL?date=2023-07-06&apiKey=OROZxfRr0KoSI6ilsYZiyp8oTRHq478Y" | jq '.results[0]'
+https://api.polygon.io/v3/snapshot/options/AAPL?date=2023-07-06&contract_type=put&apiKey=OROZxfRr0KoSI6ilsYZiyp8oTRHq478Y
+

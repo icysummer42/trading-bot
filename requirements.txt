@@ -1,0 +1,23 @@
+# Core data and numerical libraries
+numpy==1.26.4
+pandas==2.2.2
+requests==2.32.3
+
+# Market‑data helpers
+yfinance==0.2.38
+pandas_datareader==0.10.0
+polygon-api-client==1.14.0  # simple REST wrapper
+
+# Machine‑learning / modelling
+torch==2.2.2+cpu
+transformers==4.41.2
+arch==6.3.0
+
+# Optional broker/IB integration (planned)
+ib-insync==0.9.86
+
+# Linting / testing (dev only)
+pytest==8.2.0
+ruff==0.4.5
+black==24.4.2
+

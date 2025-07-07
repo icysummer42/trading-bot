@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Virtual environments
+.env
+.env.*
+venv/
+ENV/
+env/
+.venv/
+
+# Caches
+.cache/
+cache/
+
+# macOS files
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# Old, experimental, or archive folders (if you use them)
+archive/
+experiments/
+
