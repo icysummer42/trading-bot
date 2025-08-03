@@ -1,8 +1,9 @@
-"""
-Signal Generator: Sentiment, volatility, and event aggregation for trading signals.
+"""Signal Generator: Sentiment, volatility, and event aggregation for trading signals.
 
-Aggregates data from Finnhub, Polygon, Stocktwits, NewsAPI, GNews, Google Trends (pytrends), Quiver Quant, and Reddit.
-Calculates unified sentiment using OpenAI or FinBERT, forecasts volatility, and merges custom event plugins.
+This module pulls and aggregates data from multiple news/social feeds
+(Finnhub, Polygon, Stocktwits, NewsAPI, GNews, Google Trends, Quiver Quant, Reddit)
+and produces a unified sentiment score using OpenAI or FinBERT.
+It also calculates volatility forecasts and merges custom event plugins.
 """
 
 from __future__ import annotations
@@ -51,13 +52,12 @@ except ImportError:
     arch_model = None
 
 class SignalGenerator:
-    """
-    Aggregates news/social feeds, scores sentiment, forecasts volatility, and detects special events.
-    """
+    """Aggregates news/social feeds, scores sentiment, forecasts volatility, and detects special events."""
 
     def __init__(self, cfg: Config, dp: DataPipeline):
         """
-        Initialize with config, data pipeline, and event plugins. Sets up NLP/Reddit and signal weights.
+        Initialize the SignalGenerator with config, data pipeline, and plugins.
+        Sets up NLP and Reddit sentiment, event plugins, and configurable weights.
         """
         self.cfg = cfg
         self.dp = dp
@@ -149,11 +149,10 @@ class SignalGenerator:
         """Fetch recent message bodies about the symbol from Stocktwits."""
         token = getattr(self.cfg, "stocktwits_token", "")
         url = f"https://api.stocktwits.com/api/2/streams/symbol/{symbol}.json"
-        params = {"limit": max_n}
         if token:
-            params["access_token"] = token
+            url += f"?access_token={token}"
         try:
-            r = requests.get(url, params=params, timeout=6)
+            r = requests.get(url, timeout=6)
             if r.status_code == 200:
                 messages = r.json().get("messages", [])
                 return [m.get("body", "") for m in messages[:max_n]]
@@ -176,10 +175,11 @@ class SignalGenerator:
 
     def fetch_gnews(self, symbol: str, max_n=10) -> List[str]:
         """Fetch recent news headlines for the symbol using GNews (Google News)."""
+        gnews_key = getattr(self.cfg, "gnews_key", "")
         if GNews is None:
             return []
         try:
-            gnews = GNews(language='en', max_results=max_n)
+            gnews = GNews(language='en', max_results=max_n, api_key=gnews_key if gnews_key else None)
             news = gnews.get_news(symbol)
             return [a['title'] for a in news]
         except Exception as e:
@@ -203,13 +203,13 @@ class SignalGenerator:
     def fetch_quiver_news(self, symbol: str, max_n=10) -> List[str]:
         """Fetch news headlines for symbol from Quiver Quantitative."""
         api_key = getattr(self.cfg, "quiver_api_key", "")
-        url = f"https://api.quiverquant.com/beta/historical/news/{symbol.upper()}"
+        url = f"https://api.quiverquant.com/beta/historic/news/{symbol.upper()}"
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         try:
             r = requests.get(url, headers=headers, timeout=6)
             if r.status_code == 200:
                 news = r.json()
-                return [item["Title"] for item in news[:max_n] if "Title" in item]
+                return [item["Headline"] for item in news[:max_n] if "Headline" in item]
         except Exception as e:
             print(f"[ERROR] QuiverQuant: {e}")
         return []
@@ -267,26 +267,31 @@ class SignalGenerator:
         Returns score in [-1, 1].
         """
         openai_key = getattr(self.cfg, "openai_api_key", None)
-        if openai and openai_key and texts:
+        if openai and openai_key:
+            openai.api_key = openai_key
             try:
-                client = openai.OpenAI(api_key=openai_key)
                 prompt = (
-                    "Analyze the following news headlines and return a single average sentiment score from -1 (very negative) to 1 (very positive):\n\n"
-                    + "\n".join(f"- {t}" for t in texts[:10])
-                    + "\n\nAverage sentiment score:"
+                    "Analyze sentiment (positive, negative, or neutral, with a score from -1 to 1) "
+                    "for these headlines:\n" + "\n".join(texts[:5])
                 )
-                response = client.chat.completions.create(
+                resp = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}]
+                    messages=[{"role": "system", "content": prompt}],
+                    max_tokens=50,
+                    temperature=0
                 )
-                result = response.choices[0].message.content.strip()
+                content = resp.choices[0].message.content
                 import re
-                nums = re.findall(r"[-+]?\d*\.\d+|\d+", result)
-                score = float(nums[0]) if nums else 0.0
-                print(f"[DEBUG] OpenAI sentiment: {score}")
-                return score
+                match = re.search(r'(-?\d+\.\d+)', content)
+                if match:
+                    return float(match.group(1))
+                if "positive" in content.lower():
+                    return 0.5
+                if "negative" in content.lower():
+                    return -0.5
+                return 0.0
             except Exception as e:
-                print(f"[ERROR] OpenAI sentiment:", e)
+                print(f"[ERROR] OpenAI sentiment: {e}")
         # Fallback to FinBERT/transformers
         if not texts or self.pipe is None:
             return 0.0
@@ -377,7 +382,7 @@ class SignalGenerator:
 
     def get_signal_score(self, symbol: str, close_series) -> float:
         """
-        Runs all steps to produce a final signal score for a symbol.
+        Convenience method: Runs all steps to produce a final signal score for a symbol.
         """
         if close_series.empty:
             print("[ERROR] No price data for symbol. Aborting signal generation.")

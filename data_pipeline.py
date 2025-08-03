@@ -1,73 +1,69 @@
 """Market & macro data ingestion layer."""
 from __future__ import annotations
 import datetime as dt, numpy as np, pandas as pd
-from typing import Dict
-from config import Config
-import requests, warnings
-
-warnings.filterwarnings("ignore", category=UserWarning)
+import os
+import requests
 
 # Optional libs
-try: import yfinance as yf
-except ImportError: yf = None  # type: ignore
-
-try: import pandas_datareader.data as web
-except ImportError: web = None  # type: ignore
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None  # type: ignore
 
 class DataPipeline:
-    def __init__(self, cfg: Config):
+    def __init__(self, cfg):
         self.cfg = cfg
+        self.polygon_key = getattr(cfg, "polygon_key", None) or os.getenv("POLYGON_API_KEY")
 
-    # ── Equities ──────────────────────────────────────────────────────────
-    def fetch_equity_prices(self, sym: str) -> pd.DataFrame:
-        if yf is None:
-            return self._mock(sym)
-        try:
-            df = yf.Ticker(sym).history(start=self.cfg.data_start,
-                                        end=self.cfg.data_end,
-                                        auto_adjust=False)
-            df.rename(columns={"Open": "open", "High": "high", "Low": "low",
-                               "Close": "close", "Volume": "volume"}, inplace=True)
-            df["symbol"] = sym
-            return df
-        except Exception:
-            return self._mock(sym)
+    def get_close_series(self, symbol: str, start=None, end=None):
+        """Load historical close prices for a symbol as a pd.Series."""
+        print(f"[DEBUG] In pipeline: polygon_key={self.polygon_key!r}")
+        assert self.polygon_key, "Polygon key missing inside DataPipeline!"
 
-    def _mock(self, sym: str) -> pd.DataFrame:
-        idx = pd.date_range(self.cfg.data_start, dt.date.today(), freq="B")
-        df = pd.DataFrame({
-            "open":   np.random.rand(len(idx))*100,
-            "high":   np.random.rand(len(idx))*101,
-            "low":    np.random.rand(len(idx))*99,
-            "close":  np.random.rand(len(idx))*100,
-            "volume": np.random.randint(1e6, 5e6, len(idx)),
-        }, index=idx)
-        df["symbol"] = sym
-        return df
+        # Default: last 1 year
+        if not start:
+            start = (dt.date.today() - dt.timedelta(days=365)).isoformat()
+        if not end:
+            end = dt.date.today().isoformat()
 
-    # ── Options chain (nearest expiry, coarse) ────────────────────────────
-    def fetch_options_chain(self, sym: str) -> pd.DataFrame:
-        if yf is None:
-            return pd.DataFrame()
-        try:
-            t = yf.Ticker(sym)
-            exp = t.options[:1]
-            chains = [pd.concat([t.option_chain(e).calls.assign(type="call", expiry=e),
-                                  t.option_chain(e).puts.assign(type="put", expiry=e)])
-                      for e in exp]
-            return pd.concat(chains, ignore_index=True)
-        except Exception:
-            return pd.DataFrame()
+        # --- Polygon API ---
+        if self.polygon_key:
+            print(f"[INFO] Fetching close prices from Polygon for {symbol} ({start} to {end}) ...")
+            url = (
+                f"https://api.polygon.io/v2/aggs/ticker/{symbol.upper()}/range/1/day/{start}/{end}"
+                f"?adjusted=true&sort=asc&apiKey={self.polygon_key}"
+            )
+            r = requests.get(url, timeout=10)
+            print(f"[DEBUG] Polygon status: {r.status_code}")
+            if r.status_code == 200:
+                data = r.json().get("results", [])
+                print(f"[DEBUG] Polygon results length: {len(data)}")
+                if data:
+                    closes = pd.Series(
+                        [row["c"] for row in data],
+                        index=pd.to_datetime([dt.datetime.fromtimestamp(row["t"]/1000).date() for row in data])
+                    )
+                    closes.name = "close"
+                    print(f"[DEBUG] Polygon close prices:\n{closes.head()}")
+                    return closes
+                else:
+                    print(f"[WARN] Polygon returned empty data for {symbol}")
+            else:
+                print(f"[WARN] Polygon API failed: {r.status_code} - {r.text[:200]}")
 
-    # ── Macro (FRED) ──────────────────────────────────────────────────────
-    def fetch_macro(self) -> pd.DataFrame:
-        if web is None or not self.cfg.fred_key:
-            return pd.DataFrame()
-        try:
-            ids: Dict[str, str] = {"CPI": "CPIAUCSL", "FED": "FEDFUNDS"}
-            return pd.DataFrame({k: web.DataReader(v, "fred", self.cfg.data_start,
-                                                   self.cfg.data_end,
-                                                   api_key=self.cfg.fred_key)[v]
-                                 for k, v in ids.items()})
-        except Exception:
-            return pd.DataFrame()
+        # --- yfinance fallback ---
+        if yf is not None:
+            print(f"[INFO] Fetching close prices from yfinance for {symbol} ({start} to {end}) ...")
+            df = yf.download(symbol, start=start, end=end)
+            if not df.empty and "Close" in df:
+                closes = df["Close"]
+                closes.name = "close"
+                print(f"[DEBUG] yfinance close prices:\n{closes.head()}")
+                return closes
+            else:
+                print(f"[WARN] yfinance returned no data or empty series for {symbol}.")
+        else:
+            print("[ERROR] yfinance not installed.")
+
+        print("[ERROR] Could not fetch close price series for", symbol, "from any source. Returning empty series.")
+        return pd.Series(dtype=float)

@@ -17,7 +17,7 @@ class UnusualOptionsFlowPlugin(EventPlugin):
         self.symbols: List[str] = cfg.symbols_equity + cfg.symbols_etf
         self.s = requests.Session()
         if self.key:
-            self.s.params = {"apiKey": self.key}
+            self.s.params = {"apiKey": self.key}    
 
     def _snapshot(self, underlying: str):
         try:
@@ -25,7 +25,7 @@ class UnusualOptionsFlowPlugin(EventPlugin):
             return self.s.get(url, timeout=4).json().get("results", [])
         except Exception:
             return []
-
+        
     def check(self):
         if not self.key:
             return {}
