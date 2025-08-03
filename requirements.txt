@@ -1,30 +1,33 @@
 # Core data and numerical libraries
-numpy==1.26.4
-pandas==2.2.2
-requests==2.32.3
-python-dotenv==1.0.1
-arch==6.3.0
-certifi>=2024.2.2
+numpy>=1.26
+pandas>=2.2
+requests>=2.32
+python-dotenv>=1.0
+certifi
 
 # Market‑data helpers
-yfinance==0.2.38
-pandas_datareader==0.10.0
-#polygon-api-client==1.14.0  # simple REST wrapper
+yfinance>=0.2.38
+pandas_datareader>=0.10
+polygon-api-client>=1.14.0  # simple REST wrapper
 
 # Machine‑learning / modelling
-torch==2.2.2
-transformers==4.41.2
+torch # Let pip pick compatibble version for your python
+transformers>=4.41
 
 # Signal Generator / Sentiment Analysis
-requests
+newsapi-python
+gnews
+pytrends
 snscrape
-praw==7.7.1
+praw
+
+# Volatility modeling
+arch>=6.3
 
 # Optional broker/IB integration (planned)
-ib-insync==0.9.86
+ib-insync
 
 # Linting / testing (dev only)
-pytest==8.2.0
-ruff==0.4.5
-black==24.4.2
-
+pytest
+ruff
+black

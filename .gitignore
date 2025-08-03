@@ -4,6 +4,7 @@ __pycache__/
 *.pyo
 *.pyd
 *.pdb
+*$py.class
 
 # Virtual environments
 .env
@@ -13,9 +14,16 @@ ENV/
 env/
 .venv/
 
-# Caches
+# Python virtualenv
+pip-selfcheck.json
+
+# Model/data cache
+*.pt
+*.h5
+*.db
+*.sqlite
 .cache/
-cache/
+data/
 
 # macOS files
 .DS_Store
