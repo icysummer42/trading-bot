@@ -119,10 +119,11 @@ class PolygonClient:
             print(f"[ERROR] chain_on: No response or bad status for {sym} {date} {expiry}")
             return pd.DataFrame()
         try:
-            data = r.json().get("results", [])
+            res_json = r.json()
         except Exception as e:
-            print(f"[ERROR] chain_on: Failed to parse JSON for {sym} {date} {expiry}: {e}")
+            print(f"[ERROR] chain_on: Failed to decode JSON for {sym} {date} {expiry}: {e}\nResponse text: {r.text[:200]}")
             return pd.DataFrame()
+        data = res_json.get("results", [])
         if not data:
             print(f"[WARN] chain_on: No contracts for {sym} {date} {expiry}")
             return pd.DataFrame()
@@ -139,10 +140,11 @@ class PolygonClient:
             print(f"[ERROR] snapshot_chain: No response or bad status for {sym} {date}")
             return pd.DataFrame()
         try:
-            data = r.json().get("results", [])
+            res_json = r.json()
         except Exception as e:
-            print(f"[ERROR] snapshot_chain: Failed to parse JSON for {sym} {date}: {e}")
+            print(f"[ERROR] snapshot_chain: Failed to decode JSON for {sym} {date}: {e}\nResponse text: {r.text[:200]}")
             return pd.DataFrame()
+        data = res_json.get("results", [])
         if not data:
             print(f"[WARN] snapshot_chain: No contracts for {sym} {date}")
             return pd.DataFrame()
@@ -155,7 +157,12 @@ class PolygonClient:
         if r is None or r.status_code != 200:
             print(f"[ERROR] agg_close: No response or error status for {ticker} on {date}")
             return None
-        res = r.json().get("results", [])
+        try:
+            res_json = r.json()
+        except Exception as e:
+            print(f"[ERROR] agg_close: Failed to decode JSON for {ticker} on {date}: {e}\nResponse text: {r.text[:200]}")
+            return None
+        res = res_json.get("results", [])
         if not res:
             print(f"[WARN] agg_close: No price results for {ticker} on {date}")
             return None
@@ -173,10 +180,11 @@ class PolygonClient:
             print(f"[ERROR] open_close: No response or bad status for {ticker} {date}")
             return None
         try:
-            close = r.json().get("close")
+            res_json = r.json()
         except Exception as e:
-            print(f"[ERROR] open_close: Failed to parse JSON for {ticker} {date}: {e}")
+            print(f"[ERROR] open_close: Failed to decode JSON for {ticker} {date}: {e}\nResponse text: {r.text[:200]}")
             return None
+        close = res_json.get("close")
         if close is None:
             print(f"[WARN] open_close: No close price for {ticker} {date}")
         return close
@@ -192,10 +200,11 @@ class PolygonClient:
             print(f"[ERROR] expiries_on: No response or bad status for {sym} {as_of}")
             return []
         try:
-            rows = r.json().get("results", [])
+            res_json = r.json()
         except Exception as e:
-            print(f"[ERROR] expiries_on: Failed to parse JSON for {sym} {as_of}: {e}")
+            print(f"[ERROR] expiries_on: Failed to decode JSON for {sym} {as_of}: {e}\nResponse text: {r.text[:200]}")
             return []
+        rows = res_json.get("results", [])
         if not rows:
             print(f"[WARN] expiries_on: No expiries for {sym} {as_of}")
             return []

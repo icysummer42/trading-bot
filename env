@@ -5,6 +5,10 @@ POLYGON_KEY=OROZxfRr0KoSI6ilsYZiyp8oTRHq478Y
 TE_API_KEY=YOUR_TRADING_ECONOMICS_KEY
 FRED_API_KEY=YOUR_FRED_KEY
 HIBP_API_KEY=YOUR_HAVEIBEENPWNED_KEY
+FINNHUB_API_KEY=d1vm8l1r01qqgeembco0d1vm8l1r01qqgeembcog
+REDDIT_CLIENT_ID=
+REDDIT_CLIENT_SECRET=
+REDDIT_USER_AGENT=
 
 curl "https://api.polygon.io/v3/snapshot/options/AAPL?date=2023-07-06&apiKey=OROZxfRr0KoSI6ilsYZiyp8oTRHq478Y" | jq '.results[0]'
 https://api.polygon.io/v3/snapshot/options/AAPL?date=2023-07-06&contract_type=put&apiKey=OROZxfRr0KoSI6ilsYZiyp8oTRHq478Y
