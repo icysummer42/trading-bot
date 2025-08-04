@@ -11,23 +11,30 @@ pandas_datareader>=0.10
 polygon-api-client>=1.14.0  # simple REST wrapper
 
 # Machine‑learning / modelling
-torch # Let pip pick compatibble version for your python
+torch      # Let pip pick compatible version for your Python (avoid == unless needed)
 transformers>=4.41
 
 # Signal Generator / Sentiment Analysis
-newsapi-python
-gnews
-pytrends
-snscrape
-praw
+newsapi-python>=0.2.7
+gnews>=0.2.6
+pytrends>=4.9.2
+snscrape>=0.7.0
+praw>=7.8.1
 
 # Volatility modeling
 arch>=6.3
 
 # Optional broker/IB integration (planned)
-ib-insync
+ib-insync>=0.9.86
 
 # Linting / testing (dev only)
 pytest
 ruff
 black
+
+# Logging (in case you use external logging packages in the future)
+# loguru
+
+# OpenAI client (for sentiment)
+openai>=1.0.0
+
