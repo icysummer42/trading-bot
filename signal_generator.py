@@ -13,6 +13,8 @@ from data_pipeline import DataPipeline
 from plugins.events import UnusualOptionsFlowPlugin, CyberSecurityBreachPlugin, TopTierReleasePlugin
 import requests
 import datetime as dt
+from logger import get_logger
+logger = get_logger("signalgen")
 
 # Optional feeds: import if available
 try:
@@ -98,7 +100,7 @@ class SignalGenerator:
                         user_agent=praw_cfg.get("user_agent", "sentiment-bot"),
                     )
                 except Exception as e:
-                    print(f"[WARN] PRAW init failed: {e}")
+                    logger.warning(f"[WARN] PRAW init failed: {e}")
             elif all(hasattr(cfg, k) for k in ["reddit_client_id", "reddit_client_secret"]):
                 try:
                     self.reddit = praw.Reddit(
@@ -107,7 +109,7 @@ class SignalGenerator:
                         user_agent=getattr(cfg, "reddit_user_agent", "sentiment-bot"),
                     )
                 except Exception as e:
-                    print(f"[WARN] PRAW init failed: {e}")
+                    logger.warning(f"[WARN] PRAW init failed: {e}")
 
     # === API Fetchers ===
 
@@ -127,7 +129,7 @@ class SignalGenerator:
                 articles = resp.json()
                 return [a["headline"] for a in articles[:max_n] if "headline" in a]
         except Exception as e:
-            print(f"[ERROR] Finnhub: {e}")
+            logger.error(f"[ERROR] Finnhub: {e}")
         return []
 
     def fetch_polygon_headlines(self, symbol: str, max_n=10) -> List[str]:
@@ -142,7 +144,7 @@ class SignalGenerator:
                 results = resp.json().get("results", [])
                 return [a["title"] for a in results[:max_n] if "title" in a]
         except Exception as e:
-            print(f"[ERROR] Polygon news: {e}")
+            logger.error(f"[ERROR] Polygon news: {e}")
         return []
 
     def fetch_stocktwits(self, symbol: str, max_n=10) -> List[str]:
@@ -158,7 +160,7 @@ class SignalGenerator:
                 messages = r.json().get("messages", [])
                 return [m.get("body", "") for m in messages[:max_n]]
         except Exception as e:
-            print(f"[ERROR] Stocktwits: {e}")
+            logger.error(f"[ERROR] Stocktwits: {e}")
         return []
 
     def fetch_newsapi(self, symbol: str, max_n=10) -> List[str]:
@@ -171,20 +173,36 @@ class SignalGenerator:
             articles = newsapi.get_everything(q=symbol, language='en', page_size=max_n)
             return [a['title'] for a in articles.get('articles', [])]
         except Exception as e:
-            print(f"[ERROR] NewsAPI: {e}")
+            logger.error(f"[ERROR] NewsAPI: {e}")
         return []
 
-    def fetch_gnews(self, symbol: str, max_n=10) -> List[str]:
-        """Fetch recent news headlines for the symbol using GNews (Google News)."""
-        if GNews is None:
+    #def fetch_gnews(self, symbol: str, max_n=10) -> List[str]:
+     #   """Fetch recent news headlines for the symbol using GNews (Google News)."""
+      #  if GNews is None:
+       #     return []
+        #try:
+         #   gnews = GNews(language='en', max_results=max_n)
+          #  news = gnews.get_news(symbol)
+           # return [a['title'] for a in news]
+        #except Exception as e:
+         #   print(f"[ERROR] GNews: {e}")
+        #return []
+
+    def fetch_gnews(self, symbol: str, max_n=10) -> list[str]:
+        """Fetch headlines from gnews.io API (REST, requires api_key)."""
+        gnews_key = getattr(self.cfg, "gnews_key", "")
+        if not gnews_key:
             return []
+        url = f"https://gnews.io/api/v4/search?q={symbol}&lang=en&max={max_n}&token={gnews_key}"
         try:
-            gnews = GNews(language='en', max_results=max_n)
-            news = gnews.get_news(symbol)
-            return [a['title'] for a in news]
+            resp = requests.get(url, timeout=6)
+            if resp.status_code == 200:
+                news = resp.json().get('articles', [])
+                return [a['title'] for a in news]
         except Exception as e:
-            print(f"[ERROR] GNews: {e}")
+            logger.error(f"[ERROR] GNews: {e}")
         return []
+
 
     def fetch_pytrends(self, symbol: str, max_n=10) -> List[str]:
         """Fetch Google Trends data for symbol as a sentiment signal."""
@@ -197,7 +215,7 @@ class SignalGenerator:
             if not df.empty:
                 return [f"Google Trends for {symbol}: {df[symbol].iloc[-1]}"]
         except Exception as e:
-            print(f"[ERROR] pytrends: {e}")
+            logger.error(f"[ERROR] pytrends: {e}")
         return []
 
     def fetch_quiver_news(self, symbol: str, max_n=10) -> List[str]:
@@ -211,7 +229,7 @@ class SignalGenerator:
                 news = r.json()
                 return [item["Title"] for item in news[:max_n] if "Title" in item]
         except Exception as e:
-            print(f"[ERROR] QuiverQuant: {e}")
+            logger.error(f"[ERROR] QuiverQuant: {e}")
         return []
 
     def fetch_reddit(self, symbol: str, n=10) -> List[str]:
@@ -224,7 +242,7 @@ class SignalGenerator:
                 for i, submission in enumerate(self.reddit.subreddit(subreddit).search(symbol, sort="new", limit=n // 2)):
                     posts.append(submission.title + " " + submission.selftext)
         except Exception as e:
-            print(f"[ERROR] Reddit fetch: {e}")
+            logger.error(f"[ERROR] Reddit fetch: {e}")
         return posts
 
     def fetch_headlines(self, symbol: str) -> List[str]:
@@ -255,50 +273,57 @@ class SignalGenerator:
                 f"{symbol} launches new product, stock rallies",
                 f"Analysts remain bullish on {symbol} amid market volatility"
             ]
-        print(f"[DEBUG] Headlines for {symbol}: {deduped[:5]} ... [{len(deduped)} total]")
+        logger.debug(f"[DEBUG] Headlines for {symbol}: {deduped[:5]} ... [{len(deduped)} total]")
         return deduped
 
     # === Sentiment ===
 
-    def nlp_sentiment(self, texts: List[str]) -> float:
+    def nlp_sentiment(self, texts: List[str]) -> tuple[float, str]:
         """
         Compute sentiment score for a list of texts.
         Tries OpenAI (if configured), falls back to FinBERT/transformers.
-        Returns score in [-1, 1].
+        Returns (score, source) where source is 'openai', 'finbert', or 'none'.
         """
         openai_key = getattr(self.cfg, "openai_api_key", None)
-        if openai and openai_key and texts:
+        if openai and openai_key:
+            openai.api_key = openai_key
             try:
-                client = openai.OpenAI(api_key=openai_key)
                 prompt = (
-                    "Analyze the following news headlines and return a single average sentiment score from -1 (very negative) to 1 (very positive):\n\n"
-                    + "\n".join(f"- {t}" for t in texts[:10])
-                    + "\n\nAverage sentiment score:"
+                    "Analyze sentiment (positive, negative, or neutral, with a score from -1 to 1) "
+                    "for these headlines:\n" + "\n".join(texts[:5])
                 )
-                response = client.chat.completions.create(
+                resp = openai.chat.completions.create(
                     model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}]
+                    messages=[{"role": "system", "content": prompt}],
+                    max_tokens=50,
+                    temperature=0
                 )
-                result = response.choices[0].message.content.strip()
+                content = resp.choices[0].message.content
                 import re
-                nums = re.findall(r"[-+]?\d*\.\d+|\d+", result)
-                score = float(nums[0]) if nums else 0.0
-                print(f"[DEBUG] OpenAI sentiment: {score}")
-                return score
+                match = re.search(r'(-?\d+\.\d+)', content)
+                if match:
+                    logger.debug(f"OpenAI sentiment: {content}")
+                    return float(match.group(1)), "openai"
+                if "positive" in content.lower():
+                    return 0.5, "openai"
+                if "negative" in content.lower():
+                    return -0.5, "openai"
+                return 0.0, "openai"
             except Exception as e:
-                print(f"[ERROR] OpenAI sentiment:", e)
+                logger.error(f"OpenAI sentiment: {e}")
         # Fallback to FinBERT/transformers
         if not texts or self.pipe is None:
-            return 0.0
+            return 0.0, "none"
         res = [self.pipe(t)[0] for t in texts]
         scores = [(d["score"] if d["label"].lower() == "positive" else -d["score"]) for d in res]
         sent_mean = float(np.mean(scores))
-        print(f"[DEBUG] Sentiment (FinBERT): {sent_mean:.3f}")
-        return sent_mean
+        logger.debug(f"Sentiment (FinBERT): {sent_mean:.3f}")
+        return sent_mean, "finbert"
+      
 
-    def symbol_sentiment(self, symbol: str) -> float:
+    def symbol_sentiment(self, symbol: str) -> tuple[float, str]:
         """
-        Aggregate all feeds for a symbol and return unified sentiment score.
+        Aggregate all feeds for a symbol and return unified sentiment score and its source.
         """
         headlines = self.fetch_headlines(symbol)
         return self.nlp_sentiment(headlines)
@@ -308,7 +333,7 @@ class SignalGenerator:
     def _ewma_vol(self, rets):
         """Exponentially weighted moving average (EWMA) volatility estimator."""
         if rets.empty:
-            print("[ERROR] EWMA volatility requested on empty returns.")
+            logger.error("[ERROR] EWMA volatility requested on empty returns.")
             return 0.0
         lam = self.cfg.ewma_lambda
         return float(np.sqrt((rets**2).ewm(alpha=1-lam).mean().iloc[-1]))
@@ -316,7 +341,7 @@ class SignalGenerator:
     def _garch_vol(self, rets):
         """GARCH(1,1) volatility estimator (uses arch package)."""
         if arch_model is None or rets.empty:
-            print("[ERROR] GARCH volatility requested on empty returns or arch not available.")
+            logger.error("[ERROR] GARCH volatility requested on empty returns or arch not available.")
             return None
         try:
             fit = arch_model(rets*100, p=1, q=1).fit(disp="off")
@@ -330,18 +355,18 @@ class SignalGenerator:
         Returns a single volatility estimate (annualized stdev of returns).
         """
         if close.empty:
-            print("[ERROR] No close prices for volatility. Skipping.")
+            logger.error("[ERROR] No close prices for volatility. Skipping.")
             return 0.0
         rets = close.pct_change().dropna()
         if rets.empty:
-            print("[ERROR] No returns for volatility. Skipping.")
+            logger.error("[ERROR] No returns for volatility. Skipping.")
             return 0.0
         vol = self._garch_vol(rets) if getattr(self.cfg, "vol_model", None) == "garch" else None
         if vol is not None:
-            print(f"[DEBUG] GARCH Vol: {vol:.4f}")
+            logger.debug(f"[DEBUG] GARCH Vol: {vol:.4f}")
             return vol
         ewma = self._ewma_vol(rets)
-        print(f"[DEBUG] EWMA Vol: {ewma:.4f}")
+        logger.debug(f"[DEBUG] EWMA Vol: {ewma:.4f}")
         return ewma
 
     # === Events ===
@@ -355,7 +380,7 @@ class SignalGenerator:
         for p in self.plugins:
             out = p.check(symbol=symbol) if "symbol" in p.check.__code__.co_varnames else p.check()
             ev.update(out)
-        print(f"[DEBUG] Events: {ev}")
+        logger.debug(f"[DEBUG] Events: {ev}")
         return ev
 
     # === Final aggregation ===
@@ -372,7 +397,7 @@ class SignalGenerator:
             score -= 0.15*(events["cyber_breach"]["sev"]/10)
         if "macro_release" in events:
             score += 0.1*events["macro_release"]["surprise"]
-        print(f"[DEBUG] Weights: {w} | Sentiment: {sentiment:.3f} | Vol: {vol:.3f} | Events: {events} | Raw score: {score:.3f}")
+        logger.debug(f"[DEBUG] Weights: {w} | Sentiment: {sentiment:.3f} | Vol: {vol:.3f} | Events: {events} | Raw score: {score:.3f}")
         return float(np.tanh(score))
 
     def get_signal_score(self, symbol: str, close_series) -> float:
@@ -380,7 +405,7 @@ class SignalGenerator:
         Runs all steps to produce a final signal score for a symbol.
         """
         if close_series.empty:
-            print("[ERROR] No price data for symbol. Aborting signal generation.")
+            logger.error("[ERROR] No price data for symbol. Aborting signal generation.")
             return float('nan')
         sentiment = self.symbol_sentiment(symbol)
         vol = self.forecast_volatility(close_series)
