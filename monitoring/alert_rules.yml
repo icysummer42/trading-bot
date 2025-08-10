@@ -1,0 +1,35 @@
+groups:
+- name: trading_system_alerts
+  rules:
+  - alert: HighErrorRate
+    annotations:
+      description: Error rate is {{ $value }} errors/second
+      summary: High error rate detected
+    expr: rate(system_errors_total[5m]) > 0.1
+    for: 2m
+    labels:
+      severity: warning
+  - alert: SystemUnhealthy
+    annotations:
+      description: System health score is {{ $value }}%
+      summary: Trading system unhealthy
+    expr: system_health_score < 50
+    for: 1m
+    labels:
+      severity: critical
+  - alert: HighCPUUsage
+    annotations:
+      description: CPU usage is {{ $value }}%
+      summary: High CPU usage
+    expr: system_cpu_usage_percent > 80
+    for: 5m
+    labels:
+      severity: warning
+  - alert: APIDown
+    annotations:
+      description: The trading bot metrics endpoint is not responding
+      summary: Trading bot API is down
+    expr: up{job="trading-bot"} == 0
+    for: 1m
+    labels:
+      severity: critical

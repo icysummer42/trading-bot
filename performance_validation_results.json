@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-08-10T15:46:29.698949",
+  "tests_completed": 5,
+  "average_improvement_percent": 47.75171052790862,
+  "maximum_improvement_percent": 99.77381232578412,
+  "test_results": {
+    "vectorized_calculations": {
+      "options_calculated": 50000,
+      "loop_time_ms": 6756.81954191532,
+      "vectorized_time_ms": 15.283092972822487,
+      "improvement_percent": 99.77381232578412,
+      "max_result_difference": 0.0
+    },
+    "memory_optimization": {
+      "dataframe_rows": 100000,
+      "original_memory_bytes": 9333517,
+      "optimized_memory_bytes": 1500420,
+      "memory_savings_percent": 83.92438777365489,
+      "optimization_time_ms": 17.397594056092203
+    },
+    "caching_system": {
+      "test_values": 10,
+      "unique_values": 6,
+      "uncached_time_ms": 109.24603999592364,
+      "cached_time_ms": 63.37007705587894,
+      "cache_hit_rate": 0.4,
+      "improvement_percent": 41.99325022834374,
+      "results_accurate": true
+    },
+    "parallel_processing": {
+      "tasks_processed": 8,
+      "cpu_cores": 10,
+      "sequential_time_ms": 135.6903810519725,
+      "parallel_time_ms": 136.74795802216977,
+      "improvement_percent": -0.7794045252125752,
+      "speedup_factor": 0.9922662320849734,
+      "results_accurate": true
+    },
+    "technical_indicators": {
+      "price_points": 10000,
+      "traditional_time_ms": 4.4829779071733356,
+      "optimized_time_ms": 2.2406289353966713,
+      "improvement_percent": 50.019184082719214,
+      "sma_accuracy": 0.0,
+      "ema_accuracy": 0.0
+    }
+  }
+}

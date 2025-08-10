@@ -1,0 +1,201 @@
+{
+  "export_timestamp": "2025-08-09T18:23:28.506534",
+  "portfolio_summary": {
+    "timestamp": "2025-08-09T18:23:13.496598",
+    "total_value": 130000.0,
+    "unrealized_pnl": 0.0,
+    "position_count": 5,
+    "portfolio_greeks": {
+      "delta": -0.8511534795939162,
+      "gamma": -0.26631524503320886,
+      "theta": -62.79515792887262,
+      "vega": 177.30497028407066,
+      "rho": -15.302803967439818
+    },
+    "risk_metrics": {
+      "concentration": 0.3076923076923077,
+      "portfolio_volatility": 0.0,
+      "var_95_dollar": 0.0,
+      "var_95_percent": 0.0,
+      "total_positions": 5,
+      "avg_dte": 24.0
+    },
+    "recent_alerts": [
+      {
+        "timestamp": "2025-08-09T18:23:13.495543",
+        "level": "warning",
+        "category": "greek",
+        "message": "Portfolio delta exposure 0.781 exceeds limit 0.500",
+        "symbol": null
+      },
+      {
+        "timestamp": "2025-08-09T18:23:13.495543",
+        "level": "warning",
+        "category": "position",
+        "message": "AAPL position size 19.2% exceeds limit 10.0%",
+        "symbol": "AAPL"
+      },
+      {
+        "timestamp": "2025-08-09T18:23:13.495543",
+        "level": "warning",
+        "category": "position",
+        "message": "TSLA position size 23.1% exceeds limit 10.0%",
+        "symbol": "TSLA"
+      },
+      {
+        "timestamp": "2025-08-09T18:23:13.495543",
+        "level": "warning",
+        "category": "position",
+        "message": "NVDA position size 30.8% exceeds limit 10.0%",
+        "symbol": "NVDA"
+      },
+      {
+        "timestamp": "2025-08-09T18:23:13.495543",
+        "level": "warning",
+        "category": "position",
+        "message": "SPY position size 15.4% exceeds limit 10.0%",
+        "symbol": "SPY"
+      },
+      {
+        "timestamp": "2025-08-09T18:23:13.495543",
+        "level": "warning",
+        "category": "position",
+        "message": "QQQ position size 11.5% exceeds limit 10.0%",
+        "symbol": "QQQ"
+      }
+    ],
+    "positions": [
+      {
+        "symbol": "AAPL",
+        "strategy": "long_straddle",
+        "current_price": 186.67444947014386,
+        "unrealized_pnl": 0.0,
+        "position_value": 25000.0,
+        "days_to_expiry": 17,
+        "delta": 0.3561119596958968,
+        "theta": -15.6043884590996,
+        "vega": 23.599366073539812
+      },
+      {
+        "symbol": "TSLA",
+        "strategy": "short_strangle",
+        "current_price": 242.68881799794173,
+        "unrealized_pnl": 0.0,
+        "position_value": 30000.0,
+        "days_to_expiry": 30,
+        "delta": -0.25732909906837487,
+        "theta": -3.5178934639333157,
+        "vega": 32.625279624723504
+      },
+      {
+        "symbol": "NVDA",
+        "strategy": "bull_call_spread",
+        "current_price": 875.5781104058996,
+        "unrealized_pnl": 0.0,
+        "position_value": 40000.0,
+        "days_to_expiry": 12,
+        "delta": -0.4932948227169668,
+        "theta": -13.43108199846724,
+        "vega": 21.89068318610431
+      },
+      {
+        "symbol": "SPY",
+        "strategy": "iron_condor",
+        "current_price": 486.12945172184675,
+        "unrealized_pnl": 0.0,
+        "position_value": 20000.0,
+        "days_to_expiry": 20,
+        "delta": -0.19111805601735077,
+        "theta": -11.368349107399759,
+        "vega": 49.22916545241169
+      },
+      {
+        "symbol": "QQQ",
+        "strategy": "long_call_butterfly",
+        "current_price": 380.6076642803583,
+        "unrealized_pnl": 0.0,
+        "position_value": 15000.0,
+        "days_to_expiry": 41,
+        "delta": -0.2655234614871206,
+        "theta": -18.873444899972704,
+        "vega": 49.96047594729134
+      }
+    ]
+  },
+  "historical_performance": {
+    "period_days": 30,
+    "data_points": 1,
+    "total_return": 0,
+    "max_drawdown": 0,
+    "volatility": 0,
+    "current_pnl": 0.0,
+    "max_pnl": 0.0,
+    "min_pnl": 0.0,
+    "time_series": {
+      "timestamps": [
+        "2025-08-09T18:23:13.496598"
+      ],
+      "portfolio_values": [
+        130000.0
+      ],
+      "pnls": [
+        0.0
+      ]
+    }
+  },
+  "risk_limits": {
+    "max_position_var": 0.05,
+    "max_portfolio_var": 0.03,
+    "max_delta_exposure": 0.5,
+    "max_gamma_exposure": 1.0,
+    "max_vega_exposure": 1000,
+    "max_theta_decay": -500,
+    "max_position_size": 0.1,
+    "max_concentration": 0.4,
+    "min_liquidity_days": 5
+  },
+  "recent_alerts": [
+    {
+      "timestamp": "2025-08-09T18:23:13.495543",
+      "level": "warning",
+      "category": "greek",
+      "message": "Portfolio delta exposure 0.781 exceeds limit 0.500",
+      "symbol": null
+    },
+    {
+      "timestamp": "2025-08-09T18:23:13.495543",
+      "level": "warning",
+      "category": "position",
+      "message": "AAPL position size 19.2% exceeds limit 10.0%",
+      "symbol": "AAPL"
+    },
+    {
+      "timestamp": "2025-08-09T18:23:13.495543",
+      "level": "warning",
+      "category": "position",
+      "message": "TSLA position size 23.1% exceeds limit 10.0%",
+      "symbol": "TSLA"
+    },
+    {
+      "timestamp": "2025-08-09T18:23:13.495543",
+      "level": "warning",
+      "category": "position",
+      "message": "NVDA position size 30.8% exceeds limit 10.0%",
+      "symbol": "NVDA"
+    },
+    {
+      "timestamp": "2025-08-09T18:23:13.495543",
+      "level": "warning",
+      "category": "position",
+      "message": "SPY position size 15.4% exceeds limit 10.0%",
+      "symbol": "SPY"
+    },
+    {
+      "timestamp": "2025-08-09T18:23:13.495543",
+      "level": "warning",
+      "category": "position",
+      "message": "QQQ position size 11.5% exceeds limit 10.0%",
+      "symbol": "QQQ"
+    }
+  ]
+}

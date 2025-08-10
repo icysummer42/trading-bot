@@ -31,13 +31,9 @@ def score_one(symbol, cfg, dp):
             row["error_message"] = "No price data"
             logger.error(f"No price data for {symbol}, skipping.")
             return row
+
         sg = SignalGenerator(cfg, dp)
-        # Make sure symbol_sentiment returns (score, source)
-        out = sg.symbol_sentiment(symbol)
-        if isinstance(out, tuple):
-            sent_score, sent_source = out
-        else:
-            sent_score, sent_source = out, ""
+        sent_score, sent_source = sg.symbol_sentiment(symbol)  # Always returns (score, source)
         vol = sg.forecast_volatility(close_series)
         events = sg.detect_events(symbol)
         score = sg.aggregate_scores(sent_score, vol, events)

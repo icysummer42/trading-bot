@@ -1,0 +1,8 @@
+symbol,score,status,sentiment_source,n_headlines,error_message,date
+NVDA,0.115,OK,openai,31,,2025-08-10
+TSLA,0.421,OK,openai,31,,2025-08-10
+SPY,0.333,OK,openai,31,,2025-08-10
+AAPL,0.1,OK,openai,31,,2025-08-10
+QQQ,0.056,OK,openai,31,,2025-08-10
+XLE,0.308,OK,openai,31,,2025-08-10
+XLK,0.064,OK,openai,31,,2025-08-10

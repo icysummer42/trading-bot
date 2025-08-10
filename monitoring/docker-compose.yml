@@ -1,0 +1,38 @@
+services:
+  grafana:
+    container_name: grafana
+    environment:
+    - GF_SECURITY_ADMIN_USER=admin
+    - GF_SECURITY_ADMIN_PASSWORD=trading123
+    image: grafana/grafana:latest
+    ports:
+    - 3000:3000
+    volumes:
+    - grafana-storage:/var/lib/grafana
+  prometheus:
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --storage.tsdb.path=/prometheus
+    - --web.console.libraries=/etc/prometheus/console_libraries
+    - --web.console.templates=/etc/prometheus/consoles
+    - --storage.tsdb.retention.time=200h
+    - --web.enable-lifecycle
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+    - 9090:9090
+    volumes:
+    - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+  trading-dashboard:
+    build: .
+    container_name: trading-dashboard
+    depends_on:
+    - prometheus
+    environment:
+    - MONITOR_USERNAME=admin
+    - MONITOR_PASSWORD=trading123
+    ports:
+    - 8080:8080
+version: '3.8'
+volumes:
+  grafana-storage: {}

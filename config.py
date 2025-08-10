@@ -68,6 +68,14 @@ class Config:
     edge_threshold: float = float(os.getenv("EDGE_THRESHOLD", 0.8))
     # Scoring weights can be overridden at runtime (signal_weights as dict)
     signal_weights: Optional[Dict[str, float]] = None
+    
+    # === Advanced Risk Management ===
+    max_kelly_fraction: float = float(os.getenv("MAX_KELLY_FRACTION", 0.25))  # Cap Kelly at 25%
+    max_portfolio_var: float = float(os.getenv("MAX_PORTFOLIO_VAR", 0.02))  # 2% daily VaR limit
+    max_drawdown_limit: float = float(os.getenv("MAX_DRAWDOWN_LIMIT", 0.15))  # 15% max drawdown
+    max_position_size: float = float(os.getenv("MAX_POSITION_SIZE", 0.10))  # 10% per position
+    max_correlation: float = float(os.getenv("MAX_CORRELATION", 0.70))  # 70% max correlation
+    risk_free_rate: float = float(os.getenv("RISK_FREE_RATE", 0.02))  # 2% risk-free rate
 
     def __post_init__(self):
         """
