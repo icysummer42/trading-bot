@@ -42,3 +42,35 @@ data/
 archive/
 experiments/
 
+
+# Archive and backup
+*.backup
+*.old
+*_old_*
+
+# Cache and temporary files
+cache/*.pkl
+cache/*.pickle
+*.pyc
+.pytest_cache/
+.coverage
+
+# Environment and credentials
+*.env
+
+# IDE files
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+
+# Archive and backup
+
+# Cache and temporary files
+
+# Environment and credentials
+
+# IDE files
+
+# OS files

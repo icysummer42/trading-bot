@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-08-10 18:50:27",
+  "summary": {
+    "total_tests": 10,
+    "passed": 5,
+    "failed": 5,
+    "success_rate": "50.0%"
+  },
+  "test_results": {
+    "configuration_loading": {
+      "status": "FAILED",
+      "error": "'ApplicationConfig' object has no attribute 'app_name'"
+    },
+    "environment_switching": {
+      "status": "FAILED",
+      "error": ""
+    },
+    "environment_variables": {
+      "status": "FAILED",
+      "error": ""
+    },
+    "secure_configuration": {
+      "status": "PASSED",
+      "details": "Encryption and secure storage working correctly"
+    },
+    "api_key_validation": {
+      "status": "PASSED",
+      "details": "API key validation working correctly"
+    },
+    "dynamic_updates": {
+      "status": "FAILED",
+      "error": "asdict() should be called on dataclass instances"
+    },
+    "configuration_callbacks": {
+      "status": "FAILED",
+      "error": "asdict() should be called on dataclass instances"
+    },
+    "data_source_config": {
+      "status": "PASSED",
+      "details": "Data source configuration working correctly"
+    },
+    "health_monitoring": {
+      "status": "PASSED",
+      "details": "Health monitoring working correctly"
+    },
+    "configuration_templates": {
+      "status": "PASSED",
+      "details": "Configuration templates working correctly"
+    }
+  },
+  "recommendations": [
+    "5 tests failed - review and fix issues before deployment",
+    "API key validation system working correctly",
+    "Secure configuration management operational"
+  ]
+}

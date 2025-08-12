@@ -1,0 +1,36 @@
+{
+  "timestamp": "20250811_033456",
+  "files_moved": [
+    {
+      "from": "demo_advanced_configuration.py",
+      "to": "tests/demo_advanced_configuration.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "API_RATE_LIMITING_COMPLETE.md",
+      "to": "docs/reports/API_RATE_LIMITING_COMPLETE.md",
+      "category": "documentation"
+    },
+    {
+      "from": "CONFIGURATION_MANAGEMENT_COMPLETE.md",
+      "to": "docs/reports/CONFIGURATION_MANAGEMENT_COMPLETE.md",
+      "category": "documentation"
+    }
+  ],
+  "files_kept": [],
+  "directories_created": [
+    "archive/old_pipelines",
+    "archive/old_tests",
+    "archive/old_backups",
+    "archive/experimental",
+    "archive/deprecated_strategies",
+    "archive/documentation_drafts"
+  ],
+  "recommendations": [
+    "Review archived files in 30 days and permanently delete if not needed",
+    "Set up pre-commit hooks to maintain organization",
+    "Create GitHub Actions workflow for automated testing",
+    "Update README.md with new project structure",
+    "Review and update requirements.txt for accuracy"
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "timestamp": "20250810_183106",
+  "files_moved": [
+    {
+      "from": "data_pipeline_old_20250810_143916.py",
+      "to": "archive/old_pipelines/data_pipeline_old_20250810_143916.py",
+      "category": "old_pipeline"
+    },
+    {
+      "from": "old_pipeline_data_pipeline_copy_2_20250810.py",
+      "to": "archive/old_pipelines/old_pipeline_data_pipeline_copy_2_20250810.py",
+      "category": "old_pipeline"
+    },
+    {
+      "from": "old_pipeline_data_pipeline_copy_20250810.py",
+      "to": "archive/old_pipelines/old_pipeline_data_pipeline_copy_20250810.py",
+      "category": "old_pipeline"
+    },
+    {
+      "from": "backup_data_pipeline_migration",
+      "to": "archive/old_pipelines/backup_data_pipeline_migration",
+      "category": "old_pipeline"
+    },
+    {
+      "from": "data_pipeline_compat.py",
+      "to": "archive/old_pipelines/data_pipeline_compat.py",
+      "category": "old_pipeline"
+    },
+    {
+      "from": "signal_test.py",
+      "to": "tests/signal_test.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "fullsignaltest.py",
+      "to": "tests/fullsignaltest.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "batch_signal_test.py",
+      "to": "tests/batch_signal_test.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "test_pipeline_simple.py",
+      "to": "tests/test_pipeline_simple.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "test_unified_pipeline.py",
+      "to": "tests/test_unified_pipeline.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_enhanced_backtest.py",
+      "to": "tests/demo_enhanced_backtest.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_strategies.py",
+      "to": "tests/demo_strategies.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_performance_optimization.py",
+      "to": "tests/demo_performance_optimization.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_error_handling.py",
+      "to": "tests/demo_error_handling.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_risk_management.py",
+      "to": "tests/demo_risk_management.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_portfolio_dashboard.py",
+      "to": "tests/demo_portfolio_dashboard.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "demo_advanced_logging.py",
+      "to": "tests/demo_advanced_logging.py",
+      "category": "test_consolidation"
+    },
+    {
+      "from": "PERFORMANCE_OPTIMIZATION_COMPLETE.md",
+      "to": "docs/reports/PERFORMANCE_OPTIMIZATION_COMPLETE.md",
+      "category": "documentation"
+    },
+    {
+      "from": "DATA_PIPELINE_CONSOLIDATION_COMPLETE.md",
+      "to": "docs/reports/DATA_PIPELINE_CONSOLIDATION_COMPLETE.md",
+      "category": "documentation"
+    },
+    {
+      "from": "STRATEGIES_SUMMARY.md",
+      "to": "docs/STRATEGIES_SUMMARY.md",
+      "category": "documentation"
+    },
+    {
+      "from": "ADVANCED_LOGGING_MONITORING_COMPLETE.md",
+      "to": "docs/reports/ADVANCED_LOGGING_MONITORING_COMPLETE.md",
+      "category": "documentation"
+    },
+    {
+      "from": "ENHANCED_ERROR_HANDLING_COMPLETE.md",
+      "to": "docs/reports/ENHANCED_ERROR_HANDLING_COMPLETE.md",
+      "category": "documentation"
+    },
+    {
+      "from": "CLAUDE.md",
+      "to": "docs/CLAUDE.md",
+      "category": "documentation"
+    },
+    {
+      "from": "project_plan.txt",
+      "to": "docs/project_plan.txt",
+      "category": "documentation"
+    }
+  ],
+  "files_kept": [],
+  "directories_created": [
+    "archive/old_pipelines",
+    "archive/old_tests",
+    "archive/old_backups",
+    "archive/experimental",
+    "archive/deprecated_strategies",
+    "archive/documentation_drafts"
+  ],
+  "recommendations": [
+    "Review archived files in 30 days and permanently delete if not needed",
+    "Set up pre-commit hooks to maintain organization",
+    "Create GitHub Actions workflow for automated testing",
+    "Update README.md with new project structure",
+    "Review and update requirements.txt for accuracy"
+  ]
+}

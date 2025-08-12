@@ -1,0 +1,30 @@
+data_sources:
+  alpha_vantage_api_key: SECURE:alpha_vantage_key
+  finnhub_api_key: SECURE:finnhub_key
+  fred_api_key: SECURE:fred_key
+  newsapi_key: SECURE:newsapi_key
+  openweather_api_key: SECURE:openweather_key
+  polygon_api_key: SECURE:polygon_key
+  rate_limits:
+    finnhub:
+      requests_per_minute: 60
+    polygon:
+      requests_per_minute: 300
+database:
+  database: quantbot_prod
+  host: localhost
+  password: SECURE:database_password
+  port: 5432
+  username: quantbot
+monitoring:
+  enable_metrics: true
+  grafana_enabled: false
+  log_level: DEBUG
+  metrics_port: 8080
+  prometheus_enabled: false
+trading:
+  commission_per_contract: 1.0
+  max_daily_loss: 5000
+  max_position_size: 0.01
+  risk_free_rate: 0.05
+  slippage_bps: 5

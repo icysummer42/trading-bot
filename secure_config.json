@@ -1,0 +1,12 @@
+{
+  "polygon_key": "T1JPWnhmUnIwS29TSTZpbHNZWml5cDhvVFJIcTQ3OFk=",
+  "finnhub_key": "ZDF2bThsMXIwMXFxZ2VlbWJjbzBkMXZtOGwxcjAxcXFnZWVtYmNvZw==",
+  "alpha_vantage_key": "NTgzSlQ2VFdGTUlLREdWTg==",
+  "newsapi_key": "NDcwMDdlMGI4ZGU3NDg2M2IxNWQ3OWJiODNkZjU5NzY=",
+  "openweather_key": "ODgwYjNiMjA2Yzc5ZjMyYzc5OTcwYmZkMzM4YmI1NTU=",
+  "fred_key": "MWU0YWFhMmY3MzA4ZmJlZjE3NGZmNWNiMWUyYjg0NjA=",
+  "gnews_key": "MDA1MjVmMjE5M2NkOGQ2Y2NhNjIxOWJhODY5ZDAyZWE=",
+  "stocktwits_token": "eW91cl9zdG9ja3R3aXRzX3Rva2VuX2hlcmU=",
+  "reddit_client_id": "eW91cl9yZWRkaXRfY2xpZW50X2lkX2hlcmU=",
+  "database_password": "eW91cl9kYXRhYmFzZV9wYXNzd29yZF9oZXJl"
+}

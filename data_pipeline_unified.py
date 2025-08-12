@@ -250,6 +250,34 @@ class UnifiedDataPipeline:
     # EQUITY DATA METHODS
     # ═══════════════════════════════════════════════════════════════════
     
+    
+    def _fetch_alpha_vantage_data(self, symbol: str, start: str = None, end: str = None) -> pd.Series:
+        """Fetch data from Alpha Vantage API"""
+        try:
+            from alpha_vantage_data_fetcher import create_alpha_vantage_fetcher
+            
+            fetcher = create_alpha_vantage_fetcher()
+            if fetcher:
+                # Get daily data
+                data = fetcher.get_daily_data(symbol, outputsize="compact")
+                
+                if data is not None and not data.empty:
+                    logger.info(f"Alpha Vantage returned {len(data)} days for {symbol}")
+                    
+                    # Filter by date range if provided
+                    if start:
+                        data = data[data.index >= start]
+                    if end:
+                        data = data[data.index <= end]
+                    
+                    return data['Close']
+            
+            return pd.Series(dtype=float)
+            
+        except Exception as e:
+            logger.warning(f"Alpha Vantage API error for {symbol}: {e}")
+            return pd.Series(dtype=float)
+
     def get_close_series(self, symbol: str, start: Optional[str] = None, end: Optional[str] = None) -> pd.Series:
         """
         Get historical close prices with intelligent failover
